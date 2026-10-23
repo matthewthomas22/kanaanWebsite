@@ -1,0 +1,41 @@
+# Installed AI tools and machine-specific settings (reinstall per computer).
+/.agent/
+/.agents/
+/.claude/
+/.codex/
+/.cursor/
+/.gemini/
+/.impeccable/
+/.aws/
+
+# Secrets; commit placeholder examples separately.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Dependencies, generated output, and caches.
+node_modules/
+/dist/
+/build/
+/out/
+.next/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+.vite/
+coverage/
+*.tsbuildinfo
+*.log
+
+# Operating system metadata and editor temporary files.
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+*~lock~
+*.swp
+*.swo

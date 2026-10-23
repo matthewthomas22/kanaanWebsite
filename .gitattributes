@@ -1,0 +1,8 @@
+# Keep text portable between Windows and macOS.
+* text=auto
+*.md text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.sh text eol=lf
+*.png binary
+*.af binary
