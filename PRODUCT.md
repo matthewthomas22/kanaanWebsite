@@ -19,7 +19,7 @@ A church website for GKIm Kanaan. Its homepage introduces the church, its commis
 - The requested opening section presents the church name, GKIm Kanaan, in Cormorant, as confirmed by the supplied Figma typography moodboard.
 - Scrolling advances through sections introducing commissions: Kanaan Kids (children's commission), followed by KYC (youth commission).
 - Events and church activities belong in the homepage experience; verified titles, dates, and details have not been supplied.
-- Build with plain HTML, CSS, and JavaScript. Hosting, additional commissions, and event-maintenance workflow remain open decisions.
+- Build with Vue 3 and Vite while preserving the existing design, content, section anchors, and responsive behavior. Deploy the generated static build; hosting, additional commissions, and a publishing workflow for events remain open decisions.
 - Event titles and details must stay blank in the initial template.
 - Indonesian is the working language, matching supplied copy and navigation.
 
@@ -32,7 +32,7 @@ A church website for GKIm Kanaan. Its homepage introduces the church, its commis
 
 ## Evidence on Hand
 
-- `README.md` describes the repository as an asset snapshot without application code.
+- `README.md` describes the Vue development, browser verification, production build, and static hosting workflow. Original image and editable artwork archives remain preserved outside the production build.
 - `assets/images/references/Gambaran Website Kanaan.png` sketches navigation labeled Home, Sejarah, Warta, Jadwal, and Acara. Its status as a requirement is unconfirmed.
 - `assets/images/references/Screenshot 2025-10-01 101606.png` records cream `#ECE4CD`; `assets/images/references/Screenshot 2025-10-01 101749.png` records navy `#1C2850`. Their binding brand status is unconfirmed.
 - `assets/images/kanaan-kids-profiles/` contains profile images; editable artwork is in `design-files/kanaan-kids/`. Other folders under `assets/images/` contain teacher portraits and illustrated words. Selection for the new homepage is undecided.

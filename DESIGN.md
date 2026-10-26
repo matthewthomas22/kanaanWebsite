@@ -94,7 +94,7 @@ components:
 
 The confirmed moodboard supplies the visual language: deep purple fields, warm light surfaces, expressive Cormorant headings, clear Inter navigation, and restrained gold details. Large type and generous open space give the church and its commissions room to be recognized.
 
-This document records the implemented plain HTML, CSS, and JavaScript system in `index.html`, `assets/css/styles.css`, and `assets/js/script.js`. Frontmatter tokens are normative. Homepage composition and chapter order remain in `.impeccable/surfaces/index-html.md`; they are not requirements for every future surface. Local Cormorant and Inter files are shipped; the moodboard's optional Lora is not currently implemented.
+This document records the Vue 3 component system composed in `src/App.vue`, with shared styles in `assets/css/styles.css`. Vite builds the site for static hosting from `dist/`; referenced images and local fonts are bundled, while original editable artwork and unused image archives remain source materials. Frontmatter tokens are normative. Homepage composition and chapter order remain in `.impeccable/surfaces/index-html.md`; they are not requirements for every future surface. Local Cormorant and Inter files are shipped; the moodboard's optional Lora is not currently implemented.
 
 **Key Characteristics:**
 - Deep purple and warm white surface contrast.
@@ -149,9 +149,9 @@ Large banners and poster placeholders share the small surface radius. Rail marke
 
 - **Navigation:** warm white sticky header, Cormorant wordmark, Inter links. A thin underline grows on hover and stays visible for `aria-current="location"`. Phone navigation remains visible in a second row.
 - **Text links:** compact inline labels with a 20px gap, thin baseline, and directional SVG. Arrows travel 4px on hover; the church action uses gold without the baseline. Keyboard focus uses a 2px gold outline with a 6px offset.
-- **Section rail:** persistent vertical links with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. `assets/js/script.js` synchronizes the rail and header using the visible chapter and `aria-current`.
+- **Section rail:** persistent vertical links with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. The Vue active-section composable synchronizes the rail and header using the visible chapter and `aria-current`. Both components share navigation records and retain native section anchors.
 - **Dark banner:** a flat purple field with ivory display type and a small corner radius. Desktop church padding is recorded in the component token; it compresses on phones and expands on wide screens.
-- **Event template:** an ivory poster area with a calendar SVG, followed by neutral blank bars and an availability note. Actual titles, dates, and event details remain blank until verified content is supplied. These are static placeholders, not loading animation.
+- **Event template:** a shared Vue event card renders each of three stable placeholder records: an ivory poster area with a calendar SVG, followed by neutral blank bars and an availability note. Actual titles, dates, and event details remain blank until verified content is supplied. These are static placeholders, not loading animation.
 
 The current page has no form inputs, chips, dialogs, or filled buttons; this record does not invent their variants.
 
