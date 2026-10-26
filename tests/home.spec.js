@@ -38,7 +38,12 @@ test('homepage navigation, local assets, responsive chapters, and reduced motion
     }
     for (const id of ['kids', 'kyc', 'acara', 'kanaan']) {
       await page.locator(`.site-header [data-section="${id}"]`).click();
-      await expect.poll(async () => page.locator(`.site-header [data-section="${id}"]`).getAttribute('aria-current')).toBe('location');
+      await expect.poll(async () => page.evaluate(id => ({
+        active: document.querySelector(`.site-header [data-section="${id}"]`).getAttribute('aria-current'),
+        hash: location.hash,
+        scroll: scrollY,
+        top: document.getElementById(id).getBoundingClientRect().top,
+      }), id), { message: `${name}: navigate to ${id}` }).toMatchObject({ active: 'location' });
       await expect(page.locator(`.section-rail [data-section="${id}"]`)).toHaveAttribute('aria-current', 'location');
       await expect.poll(async () => Math.abs(await page.locator(`#${id}`).evaluate(el => el.getBoundingClientRect().top) - await page.locator('.site-header').evaluate(el => el.offsetHeight))).toBeLessThan(3);
       await page.screenshot({ path: `.impeccable/review/${name}-${id}.png` });
@@ -59,18 +64,64 @@ test('homepage navigation, local assets, responsive chapters, and reduced motion
   expect(errors).toEqual([]);
 });
 
-test('direct section links, rail links, and browser history keep navigation synchronized', async ({ page }) => {
+for (const reducedMotion of ['reduce', 'no-preference']) {
+  test(`direct section links, rail links, and browser history stay synchronized (${reducedMotion})`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.goto('/#kyc');
+    await expect(page.locator('.site-header [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
+    await expect(page.locator('.section-rail [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
+    await page.locator('.section-rail [data-section="kids"]').click();
+    await expect(page).toHaveURL(/#kids$/);
+    await expect(page.locator('.site-header [data-section="kids"]')).toHaveAttribute('aria-current', 'location');
+    await page.goBack();
+    await expect(page).toHaveURL(/#kyc$/);
+    await expect(page.locator('.section-rail [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
+    await page.goForward();
+    await expect(page).toHaveURL(/#kids$/);
+    await expect(page.locator('.site-header [data-section="kids"]')).toHaveAttribute('aria-current', 'location');
+  });
+}
+
+test('desktop momentum settles accurately and switching to reduced motion restores native scrolling', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  // ScrollSmoother intentionally settles initial layout before applying momentum.
+  await page.waitForTimeout(600);
+  await page.mouse.wheel(0, 500);
+  // Native scroll leads the visible content briefly, then both positions agree.
+  const lag = () => page.evaluate(() => scrollY - (document.querySelector('.site-header').offsetHeight - document.querySelector('#kanaan').getBoundingClientRect().top));
+  await expect.poll(lag).toBeGreaterThan(5);
+  await expect.poll(async () => Math.abs(await lag())).toBeLessThan(2);
+  await expect(page.locator('.site-header')).toBeInViewport();
+  await expect(page.locator('.section-rail')).toBeInViewport();
+
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/#kyc');
-  await expect(page.locator('.site-header [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
+  await expect.poll(() => page.locator('#smooth-content').evaluate(el => getComputedStyle(el).transform)).toBe('none');
+  await expect.poll(() => page.locator('#smooth-wrapper').evaluate(el => getComputedStyle(el).position)).toBe('static');
+  await page.locator('.site-header [data-section="kyc"]').click();
   await expect(page.locator('.section-rail [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
-  await page.locator('.section-rail [data-section="kids"]').click();
-  await expect(page).toHaveURL(/#kids$/);
-  await expect(page.locator('.site-header [data-section="kids"]')).toHaveAttribute('aria-current', 'location');
-  await page.goBack();
-  await expect(page).toHaveURL(/#kyc$/);
-  await expect(page.locator('.section-rail [data-section="kyc"]')).toHaveAttribute('aria-current', 'location');
-  await page.goForward();
-  await expect(page).toHaveURL(/#kids$/);
-  await expect(page.locator('.site-header [data-section="kids"]')).toHaveAttribute('aria-current', 'location');
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect.poll(() => page.locator('#smooth-wrapper').evaluate(el => getComputedStyle(el).position)).toBe('fixed');
+  await page.locator('.site-header [data-section="kids"]').click();
+  await expect.poll(() => page.locator('#kids').evaluate(el => Math.abs(el.getBoundingClientRect().top - document.querySelector('.site-header').offsetHeight))).toBeLessThan(3);
+  await page.goto('/');
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.skip-link')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#main')).toBeFocused();
+});
+
+test.describe('touch devices', () => {
+  test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+  test('keep native scrolling and section navigation', async ({ page }) => {
+    await page.goto('/');
+    await expect.poll(() => page.locator('#smooth-wrapper').evaluate(el => getComputedStyle(el).position)).toBe('static');
+    await page.locator('.site-header [data-section="kids"]').tap();
+    await expect(page.locator('.section-rail [data-section="kids"]')).toHaveAttribute('aria-current', 'location');
+    await expect(page.locator('.site-header')).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
 });

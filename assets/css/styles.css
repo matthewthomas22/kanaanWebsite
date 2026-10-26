@@ -14,3 +14,9 @@
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto;scroll-snap-type:none}*,*::before,*::after{transition:none!important;animation:none!important}}
 @media(max-width:600px){.kids .section-footer{position:static;grid-column:1 / -1;padding-top:18px;align-self:end}.kids{padding-bottom:24px}.kids-photo figcaption{margin-bottom:4px}}
 @media(max-width:600px){.wordmark span{font-size:12px}} .event-poster{padding:12px}
+
+/* Keep page chrome outside ScrollSmoother's transformed content. */
+.site-header{position:fixed;left:0;right:0}
+#smooth-content{padding-top:var(--header)}
+html.is-smooth{scroll-behavior:auto;scroll-snap-type:none}
+html.is-smooth .chapter{scroll-snap-align:none;scroll-snap-stop:normal}

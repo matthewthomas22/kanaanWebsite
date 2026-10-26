@@ -115,7 +115,7 @@ Gold (`gold`) marks directional cues, the cross, selected rail rings, and keyboa
 
 ### Neutral
 
-Warm white (`white`) forms the page and sticky header. Ivory (`ivory`) carries text on purple and the event-poster placeholder surface. Muted purple (`muted`) supports captions and placeholder labels on light fields; pale preview text (`preview-muted`) supports labels on deep purple. The blank-detail tone forms the empty event bars. Light and dark divider tokens separate content on their corresponding surfaces.
+Warm white (`white`) forms the page and fixed header. Ivory (`ivory`) carries text on purple and the event-poster placeholder surface. Muted purple (`muted`) supports captions and placeholder labels on light fields; pale preview text (`preview-muted`) supports labels on deep purple. The blank-detail tone forms the empty event bars. Light and dark divider tokens separate content on their corresponding surfaces.
 
 **The Surface Pairing Rule.** Pair ivory text with purple fields and purple text with warm white; preserve the observed supporting-text pairings.
 
@@ -129,15 +129,15 @@ The frontmatter display and headline roles record desktop defaults. The church d
 
 ## Layout
 
-The implemented homepage uses viewport-height chapters with a sticky header and a reserved right navigation rail. Chapter minimum height subtracts the header from `100svh`; content can grow. The base header is 88px, the rail 60px, and the outer gutter follows the frontmatter gutter token. Inset dark fields retain visible light page chrome.
+The implemented homepage uses viewport-height chapters with a fixed header and a reserved right navigation rail. Chapter minimum height subtracts the header from `100svh`; content can grow. The base header is 88px, the rail 60px, and the outer gutter follows the frontmatter gutter token. Inset dark fields retain visible light page chrome.
 
 At 1600px and above the rail grows to 76px and the outer gutter uses its wide variant. At 900px and below, header/rail become 80px/44px and the tablet gutter applies. At 600px and below, header/rail become 92px/28px, the phone gutter applies, and navigation wraps beneath the wordmark. Two-column commission layouts stack. Event cards change from three columns with 24px gaps to vertical rows with an 84px poster column. Children-section and event footers join document flow on phones.
 
-Desktop scroll snapping is mandatory at chapter starts with header-aware scroll padding. Phones and short desktop viewports (height at most 650px, width at least 601px) use proximity snapping. Short desktop viewports use a 70px header. Reduced-motion preference disables smooth scrolling, snapping, transitions, and animation.
+GSAP ScrollSmoother provides 0.8-second momentum on fine-pointer, hover-capable devices. Fixed header and rail remain outside its transformed content, with header-height spacing above the chapters. CSS smooth scrolling and snapping are disabled while ScrollSmoother is active. Touch devices retain native scrolling and proximity snapping on phones; short desktop viewports use a 70px header. Reduced-motion preference disables ScrollSmoother, smooth scrolling, snapping, transitions, and animation, including when changed during a visit.
 
 ## Elevation & Depth
 
-Depth comes from tonal fields, inset framing, and fine dividers. There are no surface drop shadows. The rail's concentric selection ring uses box-shadow as an indicator, not elevation. Sticky header and fixed rail sit above content without adding raised-card treatments.
+Depth comes from tonal fields, inset framing, and fine dividers. There are no surface drop shadows. The rail's concentric selection ring uses box-shadow as an indicator, not elevation. Fixed header and fixed rail sit above content without adding raised-card treatments.
 
 **The Flat Surface Rule.** Preserve tonal separation and thin rules for the existing surfaces; keep the rail ring an interaction indicator.
 
@@ -147,9 +147,9 @@ Large banners and poster placeholders share the small surface radius. Rail marke
 
 ## Components
 
-- **Navigation:** warm white sticky header, Cormorant wordmark, Inter links. A thin underline grows on hover and stays visible for `aria-current="location"`. Phone navigation remains visible in a second row.
+- **Navigation:** warm white fixed header, Cormorant wordmark, Inter links. A thin underline grows on hover and stays visible for `aria-current="location"`. Phone navigation remains visible in a second row.
 - **Text links:** compact inline labels with a 20px gap, thin baseline, and directional SVG. Arrows travel 4px on hover; the church action uses gold without the baseline. Keyboard focus uses a 2px gold outline with a 6px offset.
-- **Section rail:** persistent vertical links with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. The Vue active-section composable synchronizes the rail and header using the visible chapter and `aria-current`. Both components share navigation records and retain native section anchors.
+- **Section rail:** persistent vertical links with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. The Vue active-section composable synchronizes the rail and header using the visible chapter and `aria-current`. Both components share navigation records and retain section anchors. ScrollSmoother aligns anchor destinations below the fixed header and preserves hash history; its update callback keeps the current marker synchronized with visible content during momentum.
 - **Dark banner:** a flat purple field with ivory display type and a small corner radius. Desktop church padding is recorded in the component token; it compresses on phones and expands on wide screens.
 - **Event template:** a shared Vue event card renders each of three stable placeholder records: an ivory poster area with a calendar SVG, followed by neutral blank bars and an availability note. Actual titles, dates, and event details remain blank until verified content is supplied. These are static placeholders, not loading animation.
 

@@ -29,12 +29,21 @@ Preview uses the same address. Stop the development server before starting previ
 - `src/data/navigation.js`: shared labels and section IDs for both navigation controls.
 - `src/data/events.js`: the three stable placeholder records. Event names, dates, and images deliberately remain unfilled.
 - `src/composables/useActiveSection.js`: reactive tracking of the visible section for navigation.
-- `assets/css/styles.css`: palette, locally hosted fonts, responsive layout, and native scroll snapping.
+- `src/composables/useSmoothScroll.js`: GSAP ScrollSmoother setup, section links, and Vue lifecycle cleanup.
+- `assets/css/styles.css`: palette, locally hosted fonts, responsive layout, and native fallback scroll snapping.
 - `assets/images/kanaan-kids.png`: supplied Kanaan Kids group photo; original source files remain preserved.
 - `assets/fonts/`: Cormorant and Inter, with their SIL Open Font Licenses.
 - `PRODUCT.md` and `DESIGN.md`: confirmed product context and the implemented design system.
 
 When verified event content is available, extend the event records and pass that content into the shared event card component, with meaningful image alt text and a real heading and date. Until then, preserve the blank placeholders. Add commissions by adding their section component to the homepage and matching IDs to the shared navigation records. Use unique section IDs and the existing chapter styling for active-section tracking.
+
+## Scrolling
+
+GSAP ScrollSmoother adds 0.8-second momentum on devices with a fine pointer and hover support. Header, skip link, and section rail remain fixed outside the transformed page content. Navigation preserves section hashes and browser history, and the current-section marker follows the visible page during smoothing. Desktop CSS snapping is disabled while ScrollSmoother is active so the two systems do not compete.
+
+Touch devices retain native scrolling. Reduced-motion preference skips ScrollSmoother entirely and can be changed while the page is open. Vue unmounting removes the instance and its listeners. See the [official ScrollSmoother documentation](https://gsap.com/docs/v3/Plugins/ScrollSmoother/).
+
+The eight official GSAP agent skills are installed locally for Codex. To install them on another computer, run `npx skills add https://github.com/greensock/gsap-skills --yes --agent codex`. Their source versions are recorded in `skills-lock.json`; local skill directories remain ignored by Git.
 
 ## Browser checks
 
@@ -44,7 +53,7 @@ npx playwright install chromium
 npm test
 ```
 
-Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. Checks cover 1440px, 390px, and 320px viewports, section and rail links, browser history, desktop wheel scrolling, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. Checks cover 1440px, 390px, and 320px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
 To host the site, run `npm run build` and upload only the contents of `dist/` to a static host. Relative asset URLs support deployment at either a domain root or a subdirectory. The build includes referenced images and fonts; original artwork, unused image archives, source code, tests, and project documents stay in the repository. Rebuild after source changes. `npm run preview` is for local verification, not a production hosting service. Hosting has not been configured.
 

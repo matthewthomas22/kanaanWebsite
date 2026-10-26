@@ -8,7 +8,7 @@ export function useActiveSection() {
   let header;
 
   function updateCurrent() {
-    scrollFrame = 0;
+    if (!header || !chapters.length) return;
     const headerHeight = header.getBoundingClientRect().height;
     const marker = headerHeight + (window.innerHeight - header.offsetHeight) * .35;
     let current = chapters[0];
@@ -19,7 +19,10 @@ export function useActiveSection() {
   }
 
   function scheduleUpdate() {
-    if (!scrollFrame) scrollFrame = requestAnimationFrame(updateCurrent);
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0;
+      updateCurrent();
+    });
   }
 
   onMounted(() => {
@@ -38,5 +41,5 @@ export function useActiveSection() {
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
   });
 
-  return currentSection;
+  return { currentSection, updateCurrent };
 }
