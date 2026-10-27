@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-purple: #1e1b3a;
@@ -35,18 +35,83 @@
     scroll-padding-top: var(--header);
     scrollbar-color: var(--color-gold) var(--color-purple);
   }
-  @media (min-width: 640px) { :root { --gutter: 24px; } }
-  @media (min-width: 768px) { :root { --header: 88px; --rail: 60px; } }
-  @media (min-width: 1024px) { :root { --gutter: 32px; } }
-  body { margin: 0; background: var(--color-warm-white); color: var(--color-purple); font-family: var(--font-sans); font-size: 14px; -webkit-font-smoothing: antialiased; }
-  ::selection { background: var(--color-gold); color: var(--color-purple); }
-  button, a { -webkit-tap-highlight-color: transparent; }
-  svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-  h1, h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -.035em; line-height: .95; text-wrap: balance; }
-  em { font-weight: 400; }
-  p { line-height: 1.6; }
-  a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 6px; }
-  .chapter { position: relative; min-height: calc(100svh - var(--header)); margin-right: var(--rail); }
-  html.is-smooth { scroll-behavior: auto; }
-  @media (prefers-reduced-motion: reduce) { :root { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+  @media (min-width: 640px) {
+    :root {
+      --gutter: 24px;
+    }
+  }
+  @media (min-width: 768px) {
+    :root {
+      --header: 88px;
+      --rail: 60px;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --gutter: 32px;
+    }
+  }
+  body {
+    margin: 0;
+    background: var(--color-warm-white);
+    color: var(--color-purple);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-purple);
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+  em {
+    font-weight: 400;
+  }
+  p {
+    line-height: 1.6;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 6px;
+  }
+  .chapter {
+    position: relative;
+    min-height: calc(100svh - var(--header));
+    margin-right: var(--rail);
+  }
+  html.is-smooth {
+    scroll-behavior: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
 }

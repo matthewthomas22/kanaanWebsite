@@ -15,7 +15,10 @@ export default defineConfig({
           this.emitFile({
             type: 'asset',
             fileName: `assets/${name}`,
-            source: readFileSync(new URL(`./assets/fonts/${name}`, import.meta.url), 'utf8'),
+            source: readFileSync(
+              new URL(`./assets/fonts/${name}`, import.meta.url),
+              'utf8',
+            ),
           });
         }
       },

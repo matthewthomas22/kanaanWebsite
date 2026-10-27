@@ -10,7 +10,8 @@ export function useActiveSection() {
   function updateCurrent() {
     if (!header || !chapters.length) return;
     const headerHeight = header.getBoundingClientRect().height;
-    const marker = headerHeight + (window.innerHeight - header.offsetHeight) * .35;
+    const marker =
+      headerHeight + (window.innerHeight - header.offsetHeight) * 0.35;
     let current = chapters[0];
     for (const chapter of chapters) {
       if (chapter.getBoundingClientRect().top <= marker) current = chapter;
@@ -19,10 +20,11 @@ export function useActiveSection() {
   }
 
   function scheduleUpdate() {
-    if (!scrollFrame) scrollFrame = requestAnimationFrame(() => {
-      scrollFrame = 0;
-      updateCurrent();
-    });
+    if (!scrollFrame)
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        updateCurrent();
+      });
   }
 
   onMounted(() => {

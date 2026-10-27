@@ -22,6 +22,7 @@ A church website for GKIm Kanaan. Its homepage introduces the church, its commis
 - Build with Vue 3 and Vite while preserving the existing design, content, section anchors, and responsive behavior. Deploy the generated static build; hosting, additional commissions, and a publishing workflow for events remain open decisions.
 - Event titles and details must stay blank in the initial template.
 - Indonesian is the working language, matching supplied copy and navigation.
+- Place "Jadwal Kebaktian" immediately after the opening church section and before Kanaan Kids, with a matching navigation link. The two weekly Sunday services are "Kebaktian Umum", starting at 08.00 and usually finishing at 09.30, and "Kebaktian Kontemporer", starting at 10.00 until finished, with contemporary songs, music, and liturgy. Keep the section separate so its placement is easy to change.
 
 ## Brand Commitments
 
@@ -36,7 +37,7 @@ A church website for GKIm Kanaan. Its homepage introduces the church, its commis
 - `assets/images/references/Gambaran Website Kanaan.png` sketches navigation labeled Home, Sejarah, Warta, Jadwal, and Acara. Its status as a requirement is unconfirmed.
 - `assets/images/references/Screenshot 2025-10-01 101606.png` records cream `#ECE4CD`; `assets/images/references/Screenshot 2025-10-01 101749.png` records navy `#1C2850`. Their binding brand status is unconfirmed.
 - `assets/images/kanaan-kids-profiles/` contains profile images; editable artwork is in `design-files/kanaan-kids/`. Other folders under `assets/images/` contain teacher portraits and illustrated words. Selection for the new homepage is undecided.
-- No confirmed event listings, service schedules, address, contact details, testimonials, or youth commission artwork have been established.
+- The weekly Sunday service names and times are confirmed above. No confirmed event listings, address, contact details, testimonials, or youth commission artwork have been established.
 
 ## Product Principles
 
