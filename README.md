@@ -30,16 +30,29 @@ Preview uses the same address. Stop the development server before starting previ
 - `src/data/events.js`: the three stable placeholder records. Event names, dates, and images deliberately remain unfilled.
 - `src/composables/useActiveSection.js`: reactive tracking of the visible section for navigation.
 - `src/composables/useSmoothScroll.js`: GSAP ScrollSmoother setup, section links, and Vue lifecycle cleanup.
-- `assets/css/styles.css`: palette, locally hosted fonts, responsive layout, and native fallback scroll snapping.
+- `assets/css/styles.css`: Tailwind theme, locally hosted fonts, and the small shared global styling layer.
 - `assets/images/kanaan-kids.png`: supplied Kanaan Kids group photo; original source files remain preserved.
+- `assets/images/worship-2026/`: four user-supplied Good Friday and Easter 2026 photographs, displayed as the opening banner's static collage under a purple overlay. Each has 600px and 1200px JPEG variants; the browser selects a suitable size. Original source paths are embedded in the JPEG metadata. Source photographs remain in `D:\Downloads\Foto GKIm Kanaan\Kebaktian Umum`.
 - `assets/fonts/`: Cormorant and Inter, with their SIL Open Font Licenses.
 - `PRODUCT.md` and `DESIGN.md`: confirmed product context and the implemented design system.
 
 When verified event content is available, extend the event records and pass that content into the shared event card component, with meaningful image alt text and a real heading and date. Until then, preserve the blank placeholders. Add commissions by adding their section component to the homepage and matching IDs to the shared navigation records. Use unique section IDs and the existing chapter styling for active-section tracking.
 
+## Edit styling with Tailwind
+
+The homepage uses Tailwind CSS v4 through Vite. Edit each component's `class` attributes to change its spacing, typography, alignment, colors, and layout. The component list above maps the visible sections to their source files. No separate Tailwind configuration file is needed.
+
+For a site-wide color or font change, edit `@theme` in `assets/css/styles.css`. For example, `--color-purple` supplies `bg-purple`, `text-purple`, and `border-purple`; `--font-display` supplies `font-display`. Keep local font files and their `@font-face` rules together when changing fonts.
+
+Utilities without a prefix apply at every screen size. `sm:` applies from 640px, `md:` from 768px, and `lg:` from 1024px. Start with the phone layout, then add larger-screen variants: `grid-cols-1 lg:grid-cols-2` stacks content below 1024px. Fluid `clamp(...)` sizes let headings grow within explicit limits. Keep complete utility names in source rather than assembling pieces dynamically so Tailwind can discover them.
+
+The shared `--header`, `--gutter`, and `--rail` variables in the base layer control the fixed-header offset, page inset, and space reserved for the desktop navigation rail. Edit these values together with the matching header utilities. Below 768px the rail is hidden and has no reserved width; the top navigation remains visible. Sections use minimum heights instead of fixed heights, images preserve their proportions, and section footers stay in normal document flow so longer content can push them down.
+
+The remaining custom CSS handles local font loading, base text/SVG defaults, keyboard focus, shared chapter geometry, smooth-scroll integration, and reduced-motion preferences. Section layouts and interactive decoration live in their Vue templates. Preserve these shared behaviors when restyling. Check phone, tablet, short landscape, desktop, and wide layouts after changing content or heading sizes.
+
 ## Scrolling
 
-GSAP ScrollSmoother adds 0.8-second momentum on devices with a fine pointer and hover support. Header, skip link, and section rail remain fixed outside the transformed page content. Navigation preserves section hashes and browser history, and the current-section marker follows the visible page during smoothing. Desktop CSS snapping is disabled while ScrollSmoother is active so the two systems do not compete.
+GSAP ScrollSmoother adds 0.8-second momentum on devices with a fine pointer and hover support. Header, skip link, and section rail remain fixed outside the transformed page content. Navigation preserves section hashes and browser history, and the current-section marker follows the visible page during smoothing. Chapters have a minimum height and grow with their content; scrolling does not snap between sections.
 
 Touch devices retain native scrolling. Reduced-motion preference skips ScrollSmoother entirely and can be changed while the page is open. Vue unmounting removes the instance and its listeners. See the [official ScrollSmoother documentation](https://gsap.com/docs/v3/Plugins/ScrollSmoother/).
 
@@ -47,13 +60,15 @@ The eight official GSAP agent skills are installed locally for Codex. To install
 
 ## Browser checks
 
+The Tailwind migration skips Playwright verification, as requested. The commands below remain available for a future opt-in browser test run.
+
 ```sh
 npm ci
 npx playwright install chromium
 npm test
 ```
 
-Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. Checks cover 1440px, 390px, and 320px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. The optional existing suite covers 320px, 390px, 768px, 844px landscape, 1440px, and 1920px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
 To host the site, run `npm run build` and upload only the contents of `dist/` to a static host. Relative asset URLs support deployment at either a domain root or a subdirectory. The build includes referenced images and fonts; original artwork, unused image archives, source code, tests, and project documents stay in the repository. Rebuild after source changes. `npm run preview` is for local verification, not a production hosting service. Hosting has not been configured.
 

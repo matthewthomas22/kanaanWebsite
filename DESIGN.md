@@ -15,7 +15,7 @@ colors:
 typography:
   display:
     fontFamily: "Cormorant, Georgia, serif"
-    fontSize: "clamp(64px, 8.4vw, 96px)"
+    fontSize: "clamp(48px, 11vw, 96px)"
     fontWeight: 500
     lineHeight: 0.95
     letterSpacing: "-0.035em"
@@ -27,7 +27,7 @@ typography:
     letterSpacing: "-0.035em"
   statement:
     fontFamily: "Cormorant, Georgia, serif"
-    fontSize: "clamp(36px, 4.5vw, 64px)"
+    fontSize: "clamp(2.25rem, 5vw, 4rem)"
     fontWeight: 400
     lineHeight: 1.05
     letterSpacing: "-0.025em"
@@ -50,9 +50,8 @@ rounded:
   indicator: "50%"
 spacing:
   gutter: "32px"
-  gutter-tablet: "20px"
-  gutter-phone: "14px"
-  gutter-wide: "48px"
+  gutter-tablet: "24px"
+  gutter-phone: "16px"
   compact-gap: "12px"
   link-gap: "20px"
   grid-gap: "24px"
@@ -82,8 +81,8 @@ components:
   rail-indicator:
     backgroundColor: "{colors.muted}"
     rounded: "{rounded.indicator}"
-    width: "5px"
-    height: "5px"
+    width: "6px"
+    height: "6px"
 ---
 
 # Design System: GKIm Kanaan
@@ -94,7 +93,7 @@ components:
 
 The confirmed moodboard supplies the visual language: deep purple fields, warm light surfaces, expressive Cormorant headings, clear Inter navigation, and restrained gold details. Large type and generous open space give the church and its commissions room to be recognized.
 
-This document records the Vue 3 component system composed in `src/App.vue`, with shared styles in `assets/css/styles.css`. Vite builds the site for static hosting from `dist/`; referenced images and local fonts are bundled, while original editable artwork and unused image archives remain source materials. Frontmatter tokens are normative. Homepage composition and chapter order remain in `.impeccable/surfaces/index-html.md`; they are not requirements for every future surface. Local Cormorant and Inter files are shipped; the moodboard's optional Lora is not currently implemented.
+This document records the Vue 3 component system composed in `src/App.vue`, with Tailwind CSS v4 utilities in component templates and shared theme/base styles in `assets/css/styles.css`. Vite builds the site for static hosting from `dist/`; referenced images and local fonts are bundled, while original editable artwork and unused image archives remain source materials. The Tailwind `@theme` block is the implementation source of truth for shared palette and font tokens; this frontmatter records the design intent. Homepage composition and chapter order remain in `.impeccable/surfaces/index-html.md`; they are not requirements for every future surface. Local Cormorant and Inter files are shipped; the moodboard's optional Lora is not currently implemented.
 
 **Key Characteristics:**
 - Deep purple and warm white surface contrast.
@@ -123,17 +122,19 @@ Warm white (`white`) forms the page and fixed header. Ivory (`ivory`) carries te
 
 Cormorant, with Georgia and serif fallbacks, supplies headings, the wordmark, and expressive statements. Inter, with Arial and sans-serif fallbacks, supplies body, navigation, captions, and links. The scale is fluid and role-specific rather than a single mathematical ratio.
 
-The frontmatter display and headline roles record desktop defaults. The church display becomes `clamp(52px, 12vw, 72px)` on phones; the commission headline becomes 64px, while KYC remains 96px. Event headings use `clamp(48px, 5vw, 70px)` and 54px on phones. The youth statement becomes 44px at tablet widths and 42px on phones. Italic emphasis uses weight 400. Supporting copy resolves to 12px throughout the final stylesheet, including phone navigation, captions, footer copy, and wordmark subtitle.
+Headings use fluid sizes with explicit lower and upper limits. Kids uses `clamp(4rem, 7.5vw, 6rem)`, KYC uses `clamp(5rem, 10vw, 6rem)`, and the youth statement uses `clamp(2.25rem, 5vw, 4rem)`. Supporting copy is set locally with `text-xs` or `text-sm`; do not shrink phone copy to force content into a viewport. Italic emphasis uses weight 400.
 
 **The Type Roles Rule.** Use Cormorant for expressive hierarchy and Inter for navigation and supporting information.
 
 ## Layout
 
-The implemented homepage uses viewport-height chapters with a fixed header and a reserved right navigation rail. Chapter minimum height subtracts the header from `100svh`; content can grow. The base header is 88px, the rail 60px, and the outer gutter follows the frontmatter gutter token. Inset dark fields retain visible light page chrome.
+The homepage uses chapters with `min-height: calc(100svh - var(--header))`; every chapter can grow with its content. Header and rail stay fixed outside the transformed scroll content. The shared base variables are `--header` (128px below 768px, 88px from 768px), `--gutter` (16px, 24px from 640px, 32px from 1024px), and `--rail` (0px below 768px, 60px from 768px). Phone navigation stays visible below the wordmark, and the side rail is hidden below 768px.
 
-At 1600px and above the rail grows to 76px and the outer gutter uses its wide variant. At 900px and below, header/rail become 80px/44px and the tablet gutter applies. At 600px and below, header/rail become 92px/28px, the phone gutter applies, and navigation wraps beneath the wordmark. Two-column commission layouts stack. Event cards change from three columns with 24px gaps to vertical rows with an 84px poster column. Children-section and event footers join document flow on phones.
+Tailwind's mobile-first `sm:`, `md:`, and `lg:` variants apply from 640px, 768px, and 1024px. Commission layouts stack until 1024px. Event placeholders form compact poster-and-copy rows on phones, then adapt their column count to available width. All section footers remain in document flow, including short landscape screens. Images keep their aspect ratio, and headings scale with `clamp(...)` instead of overflowing fixed-height containers.
 
-GSAP ScrollSmoother provides 0.8-second momentum on fine-pointer, hover-capable devices. Fixed header and rail remain outside its transformed content, with header-height spacing above the chapters. CSS smooth scrolling and snapping are disabled while ScrollSmoother is active. Touch devices retain native scrolling and proximity snapping on phones; short desktop viewports use a 70px header. Reduced-motion preference disables ScrollSmoother, smooth scrolling, snapping, transitions, and animation, including when changed during a visit.
+GSAP ScrollSmoother provides 0.8-second momentum on fine-pointer, hover-capable devices. CSS smooth scrolling is disabled while ScrollSmoother is active. Touch devices retain native scrolling. Chapters do not use mandatory or proximity snapping. Reduced-motion preference disables ScrollSmoother, smooth scrolling, transitions, and animation, including when changed during a visit.
+
+To restyle one section, edit its Vue template utilities. To change the shared palette or fonts, edit `@theme`; to change fixed chrome geometry, edit the base variables together with the header/rail utilities. Custom CSS is reserved for local font loading, base typography and SVG defaults, focus, chapter geometry, scroll integration, and reduced motion.
 
 ## Elevation & Depth
 
@@ -149,7 +150,7 @@ Large banners and poster placeholders share the small surface radius. Rail marke
 
 - **Navigation:** warm white fixed header, Cormorant wordmark, Inter links. A thin underline grows on hover and stays visible for `aria-current="location"`. Phone navigation remains visible in a second row.
 - **Text links:** compact inline labels with a 20px gap, thin baseline, and directional SVG. Arrows travel 4px on hover; the church action uses gold without the baseline. Keyboard focus uses a 2px gold outline with a 6px offset.
-- **Section rail:** persistent vertical links with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. The Vue active-section composable synchronizes the rail and header using the visible chapter and `aria-current`. Both components share navigation records and retain section anchors. ScrollSmoother aligns anchor destinations below the fixed header and preserves hash history; its update callback keeps the current marker synchronized with visible content during momentum.
+- **Section rail:** vertical links visible from 768px with hover/focus labels. The current marker has a purple center and concentric warm white/gold rings. The Vue active-section composable synchronizes the rail and header using the visible chapter and `aria-current`. Both components share navigation records and retain section anchors. ScrollSmoother aligns anchor destinations below the fixed header and preserves hash history; its update callback keeps the current marker synchronized with visible content during momentum.
 - **Dark banner:** a flat purple field with ivory display type and a small corner radius. Desktop church padding is recorded in the component token; it compresses on phones and expands on wide screens.
 - **Event template:** a shared Vue event card renders each of three stable placeholder records: an ivory poster area with a calendar SVG, followed by neutral blank bars and an availability note. Actual titles, dates, and event details remain blank until verified content is supplied. These are static placeholders, not loading animation.
 

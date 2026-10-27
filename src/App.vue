@@ -16,11 +16,11 @@ useSmoothScroll(wrapper, content, updateCurrent);
 </script>
 
 <template>
-  <a class="skip-link" href="#main">Lewati navigasi</a>
+  <a class="skip-link fixed top-2.5 left-4 z-30 -translate-y-[160%] bg-warm-white px-5 py-3 focus:translate-y-0" href="#main">Lewati navigasi</a>
   <SiteHeader :current-section="currentSection" />
   <div id="smooth-wrapper" ref="wrapper">
-    <div id="smooth-content" ref="content">
-      <main id="main" tabindex="-1">
+    <div id="smooth-content" ref="content" class="pt-[var(--header)]">
+      <main id="main" tabindex="-1" class="focus:outline-none">
         <ChurchSection />
         <KidsSection />
         <YouthSection />
