@@ -78,7 +78,7 @@ npx playwright install chromium
 npm test
 ```
 
-Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. The optional existing suite covers 320px, 390px, 768px, 844px landscape, 1440px, and 1920px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. The suite covers 320px, 390px, 768px, 844px landscape, 1440px, and 1920px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, devotional reading and motion, landing previews, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
 For archive and pagination checks with more than five entries, run `npx playwright test --config tests/playwright.devotions-fixture.config.js`. This builds an isolated test site under `.scratch/renungan-harian/test-dist/` and serves it on port 4175. Its extra devotional entries are test fixtures and are never included in the normal production build.
 
@@ -89,7 +89,7 @@ To host the site, run `npm run build` and upload only the contents of `dist/` to
 ```text
 index.html                      Vite entry and page metadata
 src/
-  App.vue                       Homepage composition
+  App.vue                       Page navigation and devotional history
   components/                   Vue sections and shared components
   composables/                  Active-section tracking
   data/                         Navigation and event placeholder records
