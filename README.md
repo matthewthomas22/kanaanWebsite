@@ -6,7 +6,7 @@ A Vue 3 website for GKIm Kanaan, built with Vite from the supplied Figma moodboa
 
 Open Renungan Harian from the main navigation or the three devotional previews after Jadwal Kebaktian. The dedicated collection shows five newest-first cards at a time. Use “Berikutnya” for older devotions, “Sebelumnya” for newer ones, or “Tampilkan Semua” for the complete archive list.
 
-Each devotional has a shareable query URL that works on static hosting without server route rewrites. Opening an entry expands it into a reading view; returning restores the originating card group, archive list, or homepage position. GSAP supplies gentle floating motion and the reading transition, with a still experience for reduced-motion preferences.
+Each devotional has a shareable query URL that works on static hosting without server route rewrites. Landing-page cards open the collection. Opening an entry inside the collection shows a centered reading dialog over the existing cards or archive. Long readings scroll inside the dialog; the return button, Escape, or a backdrop click closes it and restores focus to the selected entry. The collection stays mounted at its original scroll position. Shared devotional URLs and browser Back/Forward remain supported. GSAP supplies gentle card motion, with a still experience for reduced-motion preferences.
 
 The five initial entries preserve the supplied WhatsApp devotional examples. Devotional content is separate from presentation; adding or correcting entries currently requires editing the content and rebuilding. A staff admin page is future work. No authentication, publishing scheduler, database, or content-management backend is included.
 
@@ -68,21 +68,11 @@ Touch devices retain native scrolling. Reduced-motion preference skips ScrollSmo
 
 The eight official GSAP agent skills are installed locally for Codex. To install them on another computer, run `npx skills add https://github.com/greensock/gsap-skills --yes --agent codex`. Their source versions are recorded in `skills-lock.json`; local skill directories remain ignored by Git.
 
-## Browser checks
+## Verify and host
 
-Playwright checks cover the homepage and Renungan Harian browser flows. Run:
+Run `npm run format:check` and `npm run build`. Check the landing-to-collection flow, reader scrolling and dismissal, keyboard focus, shared links, and browser Back/Forward in a browser at desktop and phone widths. Playwright and its browser test suite have been removed.
 
-```sh
-npm ci
-npx playwright install chromium
-npm test
-```
-
-Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. The suite covers 320px, 390px, 768px, 844px landscape, 1440px, and 1920px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, devotional reading and motion, landing previews, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
-
-For archive and pagination checks with more than five entries, run `npx playwright test --config tests/playwright.devotions-fixture.config.js`. This builds an isolated test site under `.scratch/renungan-harian/test-dist/` and serves it on port 4175. Its extra devotional entries are test fixtures and are never included in the normal production build.
-
-To host the site, run `npm run build` and upload only the contents of `dist/` to a static host. Relative asset URLs support deployment at either a domain root or a subdirectory. The build includes referenced images and fonts; original artwork, unused image archives, source code, tests, and project documents stay in the repository. Rebuild after source changes. `npm run preview` is for local verification, not a production hosting service. Hosting has not been configured.
+To host the site, run `npm run build` and upload only the contents of `dist/` to a static host. Relative asset URLs support deployment at either a domain root or a subdirectory. The build includes referenced images and fonts; original artwork, unused image archives, source code and project documents stay in the repository. Rebuild after source changes. `npm run preview` is for local verification, not a production hosting service. Hosting has not been configured.
 
 ## Contents
 
@@ -105,11 +95,10 @@ assets/
     kanaan-kids-profiles/        Original profile exports and cutouts
 design-files/
   kanaan-kids/                   Editable profile artwork
-tests/                         Browser checks
 dist/                          Generated static site (ignored by Git)
 ```
 
-`package.json`, `vite.config.mjs`, and `playwright.config.js` stay at the root as development configuration. `PRODUCT.md` and `DESIGN.md` record product context and design decisions. Homepage navigation uses native section anchors; Renungan Harian uses shareable query URLs without a routing-library dependency.
+`package.json` and `vite.config.mjs` stay at the root as development configuration. `PRODUCT.md` and `DESIGN.md` record product context and design decisions. Homepage navigation uses native section anchors; Renungan Harian uses shareable query URLs without a routing-library dependency.
 
 Original filenames and image variants are preserved. The root `Foto Profil Kanaan Kids.af` and its editor lock remain together because the lock may belong to an open editing session. After closing the design application, that artwork can be moved to `design-files/`; it is a separate version from the artwork in `design-files/kanaan-kids/`.
 

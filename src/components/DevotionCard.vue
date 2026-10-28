@@ -6,6 +6,7 @@ const props = defineProps({
   devotion: { type: Object, required: true },
   index: { type: Number, default: 0 },
   compact: Boolean,
+  href: { type: String, default: '' },
 });
 defineEmits(['open']);
 const card = ref(null);
@@ -17,7 +18,7 @@ const { onPointerEnter, onPointerLeave, onFocusIn, onFocusOut } =
   <a
     ref="card"
     :id="`devotion-${devotion.slug}`"
-    :href="devotionUrl(devotion.slug)"
+    :href="href || devotionUrl(devotion.slug)"
     data-devotion-card
     :data-devotion-slug="devotion.slug"
     class="devotion-card group flex h-full flex-col rounded-xl bg-warm-white p-7 text-left text-purple shadow-[0_18px_42px_-20px_#1e1b3a50] sm:p-8"

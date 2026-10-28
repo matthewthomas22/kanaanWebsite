@@ -34,6 +34,7 @@
     scroll-behavior: smooth;
     scroll-padding-top: var(--header);
     scrollbar-color: var(--color-gold) var(--color-purple);
+    scrollbar-gutter: stable;
   }
   @media (min-width: 640px) {
     :root {

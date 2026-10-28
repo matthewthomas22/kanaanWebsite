@@ -2,7 +2,7 @@
 import DevotionCard from './DevotionCard.vue';
 import { devotions, devotionUrl } from '../data/devotions.js';
 
-defineEmits(['open-devotion', 'open-collection']);
+defineEmits(['open-collection']);
 const latestDevotions = [...devotions]
   .sort((a, b) => b.date.localeCompare(a.date))
   .slice(0, 3);
@@ -39,7 +39,8 @@ const latestDevotions = [...devotions]
         :devotion="devotion"
         :index="index"
         compact
-        @open="(entry, event) => $emit('open-devotion', entry, event)"
+        :href="devotionUrl()"
+        @open="(entry, event) => $emit('open-collection', event)"
       />
     </div>
   </section>

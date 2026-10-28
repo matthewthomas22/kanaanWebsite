@@ -1,6 +1,6 @@
 # Renungan Harian
 
-Status: complete. All five tickets implemented, verified, and reviewed.
+Status: updated to use a centered reading dialog and collection-first landing navigation. Playwright has been removed at the user's request.
 
 ## Confirmed decisions
 
@@ -14,7 +14,7 @@ Status: complete. All five tickets implemented, verified, and reviewed.
 - Provide “Sebelumnya” to return to newer groups. Each group contains distinct devotions; the newest is not pinned in every group. Hide or disable unavailable group navigation at either end.
 - Provide a “Tampilkan Semua” option presenting the archive as a list of titles, dates, and short text previews rather than floating cards.
 - Archive entries open the same reading view. Closing a devotion restores the originating list or card group and its scroll position. The archive includes “Kembali ke Kartu” to restore the floating collection.
-- Clicking a card expands it into a spacious reading view and hides the other cards. A visible “Kembali ke Renungan” button reverses the transition and restores the reader’s position in the collection.
+- Clicking a collection card or archive entry opens a centered native dialog while the collection stays mounted underneath. Long content scrolls inside the reader, with a persistent “Kembali ke Renungan” control. The return button, Escape, or backdrop click closes it without an expansion/reversal animation. Preserve collection position and restore focus to the selected entry.
 - Preserve the supplied devotional text. Place the complete heading, such as “Santapan Rohani Rabu, 28 Oktober 2026”, at the top right. Treat the text between WhatsApp asterisks as the devotional title, removing the formatting markers from display. Set the remaining content as readable text with paragraph breaks and left alignment.
 - Give typography particular care, using the established site identity as the starting point.
 - A dedicated admin page for church staff to edit, update, and manage the website is future work. The first version should keep devotional content separate from its presentation; no backend or admin architecture has been selected.
@@ -24,7 +24,7 @@ Status: complete. All five tickets implemented, verified, and reviewed.
 - Place a Renungan Harian section immediately after Jadwal Kebaktian and before Kanaan Kids.
 - Keep the composition simple: a section title and three small floating cards representing the newest devotions.
 - Reuse the established card content and GSAP motion behavior at the smaller scale. Preserve readable previews and comfortable tap targets on phones.
-- Clicking a preview opens its devotional reading view on the dedicated page; “Lihat Semua Renungan” opens the dedicated collection. Returning to the landing page should restore the visitor’s position.
+- Clicking any preview or “Lihat Semua Renungan” opens the dedicated collection. Opening a devotional is a separate action inside that collection. Browser Back from the collection restores the landing-page position.
 
 ## Evidence
 
@@ -38,7 +38,9 @@ The user confirmed the full page behavior and landing-page connection, approved 
 
 No ADR yet: no hard-to-reverse architecture choice has been made.
 
-## Verification
+## Previous implementation verification
+
+The evidence below describes the earlier page-transition implementation. Its Playwright suite, fixtures, configuration, and dependency have since been removed at the user's request. Current formatting and production build checks pass. Direct browser review was blocked because the computer-use tool could not verify Chrome's current URL.
 
 - Production build and formatting checks pass.
 - Main Playwright suite: 19 tests pass, covering existing homepage behavior and devotional reading, links/history, motion, landing previews, responsive layouts, and reduced motion.

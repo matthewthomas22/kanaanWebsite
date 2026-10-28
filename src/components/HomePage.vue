@@ -11,7 +11,7 @@ import EventsSection from './EventsSection.vue';
 import { useActiveSection } from '../composables/useActiveSection.js';
 import { useSmoothScroll } from '../composables/useSmoothScroll.js';
 
-defineEmits(['open-devotion', 'open-collection']);
+defineEmits(['open-collection']);
 
 const wrapper = ref(null);
 const content = ref(null);
@@ -29,12 +29,7 @@ useSmoothScroll(wrapper, content, updateCurrent);
       <main id="main" tabindex="-1" class="focus:outline-none">
         <ChurchSection />
         <ServicesSection />
-        <DevotionsSection
-          @open-devotion="
-            (devotion, event) => $emit('open-devotion', devotion, event)
-          "
-          @open-collection="$emit('open-collection', $event)"
-        />
+        <DevotionsSection @open-collection="$emit('open-collection', $event)" />
         <KidsSection />
         <YouthSection />
         <EventsSection />

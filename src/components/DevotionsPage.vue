@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import { devotions, devotionUrl } from '../data/devotions.js';
 import DevotionCard from './DevotionCard.vue';
 const props = defineProps({
@@ -9,6 +9,46 @@ const props = defineProps({
 });
 const emit = defineEmits(['open', 'back', 'update-collection']);
 const collectionHeading = ref(null);
+const readerDialog = ref(null);
+const reader = ref(null);
+let previousOverflow;
+
+watch(
+  () => props.devotional,
+  async (devotional) => {
+    await nextTick();
+    const dialog = readerDialog.value;
+    if (devotional && dialog && !dialog.open) {
+      previousOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      dialog.showModal();
+      reader.value?.focus({ preventScroll: true });
+    } else if (!devotional && dialog?.open) {
+      dialog.close();
+      document.documentElement.style.overflow = previousOverflow;
+      previousOverflow = undefined;
+    }
+  },
+  { immediate: true, flush: 'post' },
+);
+
+onUnmounted(() => {
+  if (previousOverflow !== undefined)
+    document.documentElement.style.overflow = previousOverflow;
+});
+
+function closeFromBackdrop(event) {
+  if (event.target !== readerDialog.value) return;
+  const box = readerDialog.value.getBoundingClientRect();
+  if (
+    event.clientX < box.left ||
+    event.clientX > box.right ||
+    event.clientY < box.top ||
+    event.clientY > box.bottom
+  )
+    emit('back');
+}
+
 const archiveMode = computed(() => props.collectionState.mode === 'archive');
 const groupSize = 5;
 const lastGroup = computed(() =>
@@ -76,43 +116,6 @@ async function changeMode(mode) {
       >
         Kembali ke Renungan
       </button>
-    </div>
-    <div v-else-if="devotional" class="px-[var(--gutter)] py-8 sm:py-12">
-      <div class="mx-auto max-w-4xl">
-        <button
-          class="mb-10 flex min-h-11 items-center gap-3 text-sm"
-          @click="$emit('back')"
-        >
-          <svg class="size-5" aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M20 12H4m6-6-6 6 6 6" /></svg
-          >Kembali ke Renungan
-        </button>
-      </div>
-      <article
-        data-devotion-reader
-        tabindex="-1"
-        class="mx-auto max-w-4xl rounded-xl bg-warm-white px-1 pb-16 text-left focus:outline-none sm:px-10"
-      >
-        <p class="mb-10 text-right text-xs leading-6 text-muted sm:text-sm">
-          {{ devotional.heading }}
-        </p>
-        <h1
-          class="mb-10 max-w-[18ch] font-display text-[clamp(2.8rem,6vw,4.8rem)] leading-[1.02] tracking-[-0.025em]"
-        >
-          {{ devotional.title }}
-        </h1>
-        <div
-          class="max-w-[70ch] space-y-6 text-[16px] leading-[1.9] sm:text-[17px]"
-        >
-          <p
-            v-for="(paragraph, index) in devotional.paragraphs"
-            :key="index"
-            class="whitespace-pre-line"
-          >
-            {{ paragraph }}
-          </p>
-        </div>
-      </article>
     </div>
     <section
       v-else
@@ -232,5 +235,66 @@ async function changeMode(mode) {
         </template>
       </div>
     </section>
+    <dialog
+      ref="readerDialog"
+      class="devotion-dialog fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-4xl flex-col overflow-hidden rounded-xl bg-warm-white p-0 text-purple shadow-[0_24px_80px_-16px_#1e1b3a66] open:flex sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)]"
+      aria-labelledby="devotion-title"
+      @cancel.prevent="$emit('back')"
+      @click="closeFromBackdrop"
+    >
+      <template v-if="devotional">
+        <div class="shrink-0 border-b border-purple/15 px-6 py-3 sm:px-10">
+          <button
+            class="flex min-h-11 items-center gap-3 text-sm underline-offset-4 hover:underline"
+            @click="$emit('back')"
+          >
+            <svg class="size-5" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M20 12H4m6-6-6 6 6 6" />
+            </svg>
+            Kembali ke Renungan
+          </button>
+        </div>
+        <article
+          :key="devotional.slug"
+          ref="reader"
+          data-devotion-reader
+          tabindex="-1"
+          class="min-h-0 overflow-y-auto overscroll-contain px-6 pt-7 pb-10 text-left focus:outline-none sm:px-10 sm:pt-9 sm:pb-14"
+        >
+          <p class="mb-8 text-right text-xs leading-6 text-muted sm:text-sm">
+            {{ devotional.heading }}
+          </p>
+          <h1
+            id="devotion-title"
+            class="mb-8 max-w-[18ch] font-display text-[clamp(2.5rem,6vw,4.8rem)] leading-[1.02] tracking-[-0.025em]"
+          >
+            {{ devotional.title }}
+          </h1>
+          <div class="max-w-[70ch] space-y-6 text-base sm:text-[17px]">
+            <p
+              v-for="(paragraph, index) in devotional.paragraphs"
+              :key="index"
+              class="whitespace-pre-line"
+            >
+              {{ paragraph }}
+            </p>
+          </div>
+        </article>
+      </template>
+    </dialog>
   </main>
 </template>
+
+<style scoped>
+.devotion-dialog::backdrop {
+  background: rgb(30 27 58 / 48%);
+}
+
+[data-devotion-reader] {
+  scrollbar-color: var(--color-muted) var(--color-warm-white);
+}
+
+[data-devotion-reader] p {
+  line-height: 1.85;
+}
+</style>

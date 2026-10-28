@@ -4,9 +4,6 @@ import HomePage from './components/HomePage.vue';
 import SiteHeader from './components/SiteHeader.vue';
 import DevotionsPage from './components/DevotionsPage.vue';
 import { devotions, devotionUrl } from './data/devotions.js';
-import { useDevotionTransition } from './composables/useDevotionTransition.js';
-
-const { captureSource, enter, leave } = useDevotionTransition();
 function readRoute() {
   const query = new URLSearchParams(location.search);
   return {
@@ -51,6 +48,7 @@ function updateCollection(patch) {
   );
 }
 async function syncRoute(restore = false) {
+  const previousPage = route.value.page;
   route.value = readRoute();
   if (history.state?.renungan)
     Object.assign(collectionState, history.state.renungan);
@@ -60,6 +58,14 @@ async function syncRoute(restore = false) {
       ? originalTitle
       : `${devotional?.title || 'Renungan Harian'} — GKIm Kanaan`;
   await nextTick();
+  // Reading is a dialog over the mounted collection: leave its scroll untouched.
+  if (route.value.page === 'renungan' && route.value.slug) return;
+  if (
+    previousPage === 'renungan' &&
+    route.value.page === 'renungan' &&
+    !restore
+  )
+    return;
   const position = restore ? history.state?.position : null;
   await new Promise((resolve) =>
     requestAnimationFrame(() =>
@@ -78,7 +84,6 @@ async function openDevotion(devotion, event) {
   if (!plainClick(event)) return;
   event?.preventDefault();
   event?.currentTarget?.focus({ preventScroll: true });
-  captureSource(event?.currentTarget);
   savePosition();
   history.pushState(
     { renungan: { ...collectionState }, devotionalOrigin: true },
@@ -86,7 +91,6 @@ async function openDevotion(devotion, event) {
     devotionUrl(devotion.slug),
   );
   await syncRoute();
-  await enter(document.querySelector('[data-devotion-reader]'));
 }
 async function openCollection(event) {
   if (!plainClick(event)) return;
@@ -98,7 +102,6 @@ async function openCollection(event) {
 async function back() {
   if (navigating) return;
   navigating = true;
-  await leave(document.querySelector('[data-devotion-reader]'));
   if (history.state?.devotionalOrigin) {
     history.back();
     return;
@@ -115,11 +118,7 @@ async function back() {
 async function onPopState() {
   // Homepage hash navigation belongs to its native/ScrollSmoother anchor handler.
   if (route.value.page === 'home' && readRoute().page === 'home') return;
-  if (route.value.slug && route.value.slug !== readRoute().slug && !navigating)
-    await leave(document.querySelector('[data-devotion-reader]'));
   await syncRoute(true);
-  if (route.value.slug)
-    await enter(document.querySelector('[data-devotion-reader]'));
   navigating = false;
 }
 onMounted(() => {
@@ -135,11 +134,7 @@ onUnmounted(() => window.removeEventListener('popstate', onPopState));
     href="#main"
     >Lewati navigasi</a
   >
-  <HomePage
-    v-if="route.page === 'home'"
-    @open-devotion="openDevotion"
-    @open-collection="openCollection"
-  />
+  <HomePage v-if="route.page === 'home'" @open-collection="openCollection" />
   <template v-else>
     <SiteHeader devotional-page @open-collection="openCollection" />
     <DevotionsPage
