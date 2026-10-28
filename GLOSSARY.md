@@ -4,6 +4,10 @@ Istilah untuk kebaktian dan kehidupan jemaat GKIm Kanaan.
 
 ## Language
 
+**Renungan Harian**:
+Bacaan rohani harian yang mengajak jemaat merenungkan firman Tuhan dalam kehidupan sehari-hari.
+_Avoid_: Daily Devotional, Renungan Pagi (sebagai nama halaman)
+
 **Jadwal Kebaktian**:
 Jadwal dua kebaktian rutin hari Minggu di GKIm Kanaan: Kebaktian Umum dan Kebaktian Kontemporer.
 _Avoid_: Sunday Services, Jadwal Ibadah

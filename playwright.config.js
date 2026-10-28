@@ -16,6 +16,7 @@ const executablePath =
 
 module.exports = defineConfig({
   testDir: './tests',
+  testIgnore: '**/fixtures/**',
   use: {
     baseURL: 'http://127.0.0.1:4174',
     launchOptions: {

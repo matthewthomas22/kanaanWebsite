@@ -1,6 +1,7 @@
 export const navigation = [
   { id: 'kanaan', label: 'GKIm Kanaan', headerLabel: 'Beranda' },
   { id: 'jadwal', label: 'Jadwal Kebaktian', headerLabel: 'Jadwal Kebaktian' },
+  { id: 'renungan', label: 'Renungan Harian', header: false },
   {
     id: 'kids',
     label: 'Kanaan Kids',

@@ -91,7 +91,8 @@
   p {
     line-height: 1.6;
   }
-  a:focus-visible {
+  a:focus-visible,
+  button:focus-visible {
     outline: 2px solid var(--color-gold);
     outline-offset: 6px;
   }

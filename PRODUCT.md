@@ -16,6 +16,12 @@ A church website for GKIm Kanaan. Its homepage introduces the church, its commis
 
 ## Capabilities and Constraints
 
+- Renungan Harian is a dedicated Indonesian devotional page with shareable reading views, five newest-first floating cards per group, older/newer navigation, and a complete archive list. Return controls preserve the originating view and position.
+- The landing page introduces Renungan Harian immediately after Jadwal Kebaktian with three small floating cards showing the newest entries and a link to the full collection.
+- Devotional cards drift continuously in X/Y with slight rotation and soft shadows using GSAP. Hover or keyboard focus straightens and lifts the selected card; leaving resumes floating. Reading views remain still, and reduced-motion preferences are respected.
+- Initial devotional content comes from the five supplied WhatsApp examples dated 24–28 October 2026. Preserve their full text, put the complete Santapan Rohani date heading at the top right, and use left-aligned titles and reading text.
+- A dedicated admin page for church staff to manage content is future work. Keep devotional content separate from presentation; the current scope adds no backend or admin interface.
+
 - The requested opening section presents the church name, GKIm Kanaan, in Cormorant, as confirmed by the supplied Figma typography moodboard.
 - Scrolling advances through sections introducing commissions: Kanaan Kids (children's commission), followed by KYC (youth commission).
 - Events and church activities belong in the homepage experience; verified titles, dates, and details have not been supplied.

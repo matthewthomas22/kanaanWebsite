@@ -1,6 +1,14 @@
 # Kanaan Website
 
-A Vue 3 homepage for GKIm Kanaan, built with Vite from the supplied Figma moodboard. Scroll through the church, Kanaan Kids, KYC, and the event template. The production build is a static site; it needs no application server.
+A Vue 3 website for GKIm Kanaan, built with Vite from the supplied Figma moodboard. The homepage introduces the church, Jadwal Kebaktian, Renungan Harian, Kanaan Kids, KYC, and the event template. The production build is a static site; it needs no application server.
+
+## Renungan Harian
+
+Open Renungan Harian from the main navigation or the three devotional previews after Jadwal Kebaktian. The dedicated collection shows five newest-first cards at a time. Use “Berikutnya” for older devotions, “Sebelumnya” for newer ones, or “Tampilkan Semua” for the complete archive list.
+
+Each devotional has a shareable query URL that works on static hosting without server route rewrites. Opening an entry expands it into a reading view; returning restores the originating card group, archive list, or homepage position. GSAP supplies gentle floating motion and the reading transition, with a still experience for reduced-motion preferences.
+
+The five initial entries preserve the supplied WhatsApp devotional examples. Devotional content is separate from presentation; adding or correcting entries currently requires editing the content and rebuilding. A staff admin page is future work. No authentication, publishing scheduler, database, or content-management backend is included.
 
 ## Preview the website
 
@@ -24,10 +32,12 @@ Preview uses the same address. Stop the development server before starting previ
 
 ## Edit the homepage
 
-- `src/App.vue`: homepage composition with header, commission sections, event section, and navigation rail.
+- `src/App.vue`: devotional query navigation, browser history, and restoration of the originating view.
+- `src/components/HomePage.vue`: homepage composition with header, commission sections, event section, and navigation rail.
 - `src/components/`: Vue components for the header, rail, church, Kanaan Kids, KYC, and reusable event placeholders.
 - `src/data/navigation.js`: shared labels and section IDs for both navigation controls.
 - `src/data/events.js`: the three stable placeholder records. Event names, dates, and images deliberately remain unfilled.
+- `src/data/devotions.js`: devotional records with a stable slug, ISO date, display date, full date heading, title, opening reflection preview, and complete text paragraphs. Keep slugs stable so shared links continue to work; add new entries in newest-first order.
 - `src/composables/useActiveSection.js`: reactive tracking of the visible section for navigation.
 - `src/composables/useSmoothScroll.js`: GSAP ScrollSmoother setup, section links, and Vue lifecycle cleanup.
 - `assets/css/styles.css`: Tailwind theme, locally hosted fonts, and the small shared global styling layer.
@@ -60,7 +70,7 @@ The eight official GSAP agent skills are installed locally for Codex. To install
 
 ## Browser checks
 
-The Tailwind migration skips Playwright verification, as requested. The commands below remain available for a future opt-in browser test run.
+Playwright checks cover the homepage and Renungan Harian browser flows. Run:
 
 ```sh
 npm ci
@@ -69,6 +79,8 @@ npm test
 ```
 
 Tests build the site and start a fresh Vite preview server at http://127.0.0.1:4174; leave that port free. The optional existing suite covers 320px, 390px, 768px, 844px landscape, 1440px, and 1920px viewports, section and rail links, browser history, desktop momentum and wheel scrolling, native touch scrolling, live reduced-motion changes, image and font loading, reduced motion, keyboard entry, blank event placeholders, and production output isolation. Screenshots are saved under `.impeccable/review/` (ignored by Git). An existing local Chromium browser can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+For archive and pagination checks with more than five entries, run `npx playwright test --config tests/playwright.devotions-fixture.config.js`. This builds an isolated test site under `.scratch/renungan-harian/test-dist/` and serves it on port 4175. Its extra devotional entries are test fixtures and are never included in the normal production build.
 
 To host the site, run `npm run build` and upload only the contents of `dist/` to a static host. Relative asset URLs support deployment at either a domain root or a subdirectory. The build includes referenced images and fonts; original artwork, unused image archives, source code, tests, and project documents stay in the repository. Rebuild after source changes. `npm run preview` is for local verification, not a production hosting service. Hosting has not been configured.
 
@@ -97,7 +109,7 @@ tests/                         Browser checks
 dist/                          Generated static site (ignored by Git)
 ```
 
-`package.json`, `vite.config.mjs`, and `playwright.config.js` stay at the root as development configuration. `PRODUCT.md` and `DESIGN.md` record product context and design decisions. Vue Router and a global state library are unnecessary for the current single page; navigation uses native section anchors.
+`package.json`, `vite.config.mjs`, and `playwright.config.js` stay at the root as development configuration. `PRODUCT.md` and `DESIGN.md` record product context and design decisions. Homepage navigation uses native section anchors; Renungan Harian uses shareable query URLs without a routing-library dependency.
 
 Original filenames and image variants are preserved. The root `Foto Profil Kanaan Kids.af` and its editor lock remain together because the lock may belong to an open editing session. After closing the design application, that artwork can be moved to `design-files/`; it is a separate version from the artwork in `design-files/kanaan-kids/`.
 

@@ -19,6 +19,7 @@
 # Dependencies, generated output, and caches.
 node_modules/
 /dist/
+/.scratch/renungan-harian/test-dist/
 /build/
 /out/
 .next/
