@@ -1,11 +1,11 @@
-import { onMounted, onUnmounted } from 'vue';
+import { onBeforeUnmount, onMounted } from 'vue';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-export function useSmoothScroll(wrapper, content, updateCurrent) {
+export function useSmoothScroll(wrapper, content, updateCurrent = () => {}) {
   let media;
 
   onMounted(() => {
@@ -96,5 +96,5 @@ export function useSmoothScroll(wrapper, content, updateCurrent) {
     );
   });
 
-  onUnmounted(() => media?.revert());
+  onBeforeUnmount(() => media?.revert());
 }

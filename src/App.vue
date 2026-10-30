@@ -4,6 +4,9 @@ import HomePage from './components/HomePage.vue';
 import SiteHeader from './components/SiteHeader.vue';
 import DevotionsPage from './components/DevotionsPage.vue';
 import { devotions, devotionUrl } from './data/devotions.js';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePageTransition } from './composables/usePageTransition.js';
 function readRoute() {
   const query = new URLSearchParams(location.search);
   return {
@@ -12,6 +15,8 @@ function readRoute() {
   };
 }
 const route = ref(readRoute());
+const pageCover = ref(null);
+const pageTransition = usePageTransition(pageCover);
 const collectionState = reactive({
   group: 0,
   mode: 'cards',
@@ -19,6 +24,7 @@ const collectionState = reactive({
   focus: '',
 });
 const originalTitle = document.title;
+const originalScrollRestoration = history.scrollRestoration;
 let navigating = false;
 function plainClick(event) {
   return (
@@ -48,6 +54,12 @@ function updateCollection(patch) {
   );
 }
 async function syncRoute(restore = false) {
+  if (route.value.page !== readRoute().page) {
+    return pageTransition.run(() => applyRoute(restore));
+  }
+  return applyRoute(restore);
+}
+async function applyRoute(restore = false) {
   const previousPage = route.value.page;
   route.value = readRoute();
   if (history.state?.renungan)
@@ -70,10 +82,32 @@ async function syncRoute(restore = false) {
   await new Promise((resolve) =>
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
-        window.scrollTo({ top: position?.scroll || 0, behavior: 'instant' });
+        ScrollTrigger.refresh();
+        const smoother = ScrollSmoother.get();
+        let anchor;
+        if (!position && route.value.page === 'home' && location.hash) {
+          try {
+            anchor = document.getElementById(
+              decodeURIComponent(location.hash.slice(1)),
+            );
+          } catch {
+            // Ignore malformed fragment identifiers.
+          }
+        }
+        if (anchor && smoother) {
+          const header = document.querySelector('.site-header');
+          smoother.scrollTo(
+            anchor,
+            false,
+            `top ${header?.offsetHeight || 0}px`,
+          );
+        } else if (anchor) anchor.scrollIntoView({ behavior: 'instant' });
+        else if (smoother) smoother.scrollTop(position?.scroll || 0);
+        else
+          window.scrollTo({ top: position?.scroll || 0, behavior: 'instant' });
         const target = position?.focus
           ? document.getElementById(position.focus)
-          : document.querySelector('[data-devotion-reader]');
+          : anchor || document.getElementById('main');
         target?.focus({ preventScroll: true });
         resolve();
       }),
@@ -121,11 +155,42 @@ async function onPopState() {
   await syncRoute(true);
   navigating = false;
 }
+// Delegate internal page links here so every page uses the shared transition.
+async function onPageLink(event) {
+  if (event.defaultPrevented || !plainClick(event)) return;
+  const link = event.target.closest('a[href]');
+  if (
+    !link ||
+    link.hasAttribute('download') ||
+    (link.target && link.target !== '_self')
+  )
+    return;
+  const destination = new URL(link.href, location.href);
+  const normalizePath = (path) => path.replace(/index\.html$/, '');
+  if (
+    destination.origin !== location.origin ||
+    normalizePath(destination.pathname) !== normalizePath(location.pathname)
+  )
+    return;
+  const page =
+    destination.searchParams.get('page') === 'renungan' ? 'renungan' : 'home';
+  if (page === route.value.page) return;
+  event.preventDefault();
+  savePosition();
+  history.pushState({ renungan: { ...collectionState } }, '', destination.href);
+  await syncRoute();
+}
 onMounted(() => {
+  history.scrollRestoration = 'manual';
+  document.addEventListener('click', onPageLink);
   window.addEventListener('popstate', onPopState);
   if (route.value.page !== 'home') syncRoute();
 });
-onUnmounted(() => window.removeEventListener('popstate', onPopState));
+onUnmounted(() => {
+  document.removeEventListener('click', onPageLink);
+  window.removeEventListener('popstate', onPopState);
+  history.scrollRestoration = originalScrollRestoration;
+});
 </script>
 
 <template>
@@ -149,4 +214,16 @@ onUnmounted(() => window.removeEventListener('popstate', onPopState));
       @update-collection="updateCollection"
     />
   </template>
+  <div ref="pageCover" class="page-reveal" aria-hidden="true"></div>
 </template>
+
+<style scoped>
+.page-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--color-warm-white);
+}
+</style>
